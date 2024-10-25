@@ -44,7 +44,7 @@ const Sidebar = () => {
         navigate('/');
         break;
       case 'Mycourses':
-        navigate('/history');
+        navigate('/mycourses');
         break;
       case "Settings":
         navigate('/');
