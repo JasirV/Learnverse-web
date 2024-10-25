@@ -54,27 +54,41 @@ const CourseForm = ({ setStep }) => {
 
         {/* Course Duration */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Course Duration</label>
-          <input
-            type="text"
-            value={course.duration}
-            onChange={(e) => handleFieldChange('duration', e.target.value)}
-            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-            required
-          />
-        </div>
+  <label className="block text-sm font-medium text-gray-700">Course Duration</label>
+  <select
+    value={course.duration}
+    onChange={(e) => handleFieldChange('duration', e.target.value)}
+    className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+    required
+  >
+    <option value="" disabled>Select Duration</option>
+    <option value="1 month">1 Month</option>
+    <option value="3 months">3 Months</option>
+    <option value="6 months">6 Months</option>
+    <option value="1 year">1 Year</option>
+    <option value="add-new" disabled>Add New</option>
+  </select>
+</div>
 
-        {/* Course Category */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Course Category</label>
-          <input
-            type="text"
-            value={course.category}
-            onChange={(e) => handleFieldChange('category', e.target.value)}
-            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-            required
-          />
-        </div>
+{/* Course Category */}
+<div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">Course Category</label>
+  <select
+    value={course.category}
+    onChange={(e) => handleFieldChange('category', e.target.value)}
+    className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+    required
+  >
+    <option value="" disabled>Select Category</option>
+    <option value="Technology & Programming">Technology & Programming</option>
+    <option value="Business & Management">Business & Management</option>
+    <option value="Design & Multimedia">Design & Multimedia</option>
+    <option value="Personal Development">Personal Development</option>
+    <option value="Academic Subjects">Academic Subjects</option>
+    <option value="add-new" disabled>Add New </option>
+  </select>
+</div>
+
 
         {/* Cover Image */}
         <div className="mb-4">

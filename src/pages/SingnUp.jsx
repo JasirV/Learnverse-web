@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { SiStudyverse } from "react-icons/si";
 import LoginImg from "../assets/images/LoginImg.jpg";
 import { useNavigate } from "react-router-dom";
+import AuthButton from "../components/AuthButton";
 
 const SingnUp = () => {
     const navigate=useNavigate()
@@ -14,10 +15,24 @@ const SingnUp = () => {
     console.log("Email:", email);
     console.log("Password:", password);
   };
+  const handleGoogleSuccess = (credentialResponse) => {
+    console.log('Google Login Success:', credentialResponse);
+  };
+
+  const handleGoogleError = () => {
+    console.log('Google Login Failed');
+  };
+
+  
+  const handleGitHubClick = () => {
+    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID; // No quotes should be added here
+    console.log(clientId, 'GitHub Client ID'); // This will show the client ID in the console
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}`;
+};
 
   return (
     <div className="flex justify-center items-center h-screen w-full">
-      <div className="w-2/3 h-3/4 rounded-xl flex shadow-xl border bg-white ">
+      <div className="w-2/3  rounded-xl flex shadow-xl border bg-white ">
         <div className="w-1/2 h-full flex flex-col justify-center p-10 ">
           {/* Heading and Icon */}
           <div className="mb-6">
@@ -105,13 +120,20 @@ const SingnUp = () => {
               </button>
             </div>
           </form>
+          <div className="flex w-full justify-center mt-4">
+            <AuthButton
+              onGoogleSuccess={handleGoogleSuccess}
+              onGoogleError={handleGoogleError}
+              onGitHubClick={handleGitHubClick}
+            />
+          </div>
           <div className="flex w-full justify-end text-blue-500 font-light mt-2" onClick={()=>{navigate('/login')}}>
             <a href="#" className="text-sm hover:underline">
               Already have an account?
             </a>
           </div>
         </div>
-        <div className="w-1/2 h-full relative flex  items-center justify-center overflow-hidden rounded-lg bg-background  ">
+        <div className="w-1/2  relative flex  items-center justify-center overflow-hidden rounded-lg bg-background  ">
           {/* Optional: Add any desired content or image */}
           <img
             src={LoginImg}
