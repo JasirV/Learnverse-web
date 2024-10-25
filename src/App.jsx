@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import SingnUp from './pages/SingnUp';
 import Home from './pages/Home';
 import Mycourses from './pages/Mycourses';
+import MyCourses from './pages/Mycourses';
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path='/login' element={<Login/>}/>
         <Route path='/singnup' element={<SingnUp/>}/>
         <Route path='/mycourses' element={<Mycourses/>}/>
+        <Route path='/mycourses/:courseType' element={<MyCourses/>}/>
         <Route path='/forum' element={<ForumModule/>}/>
         <Route path='/courses/new' element={<CourseForm/>}/>
     </Routes>
