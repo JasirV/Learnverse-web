@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import useCreateCourse from "../hooks/userCreateCourse";
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -39,13 +40,26 @@ const modalVariant = {
   exit: { opacity: 0 },
 };
 
-const ConfirmationModal = ({ isOpen,setIsOpen}) => {
-    const navigate=useNavigate('')
-    const onConfirm=()=>{
-        console.log("file uploaded")
-        setIsOpen(false)
-        navigate('/mycourses')
+const ConfirmationModal = ({ isOpen, setIsOpen }) => {
+  const navigate = useNavigate();
+  const { createCourse, loading } = useCreateCourse(); // Ensure useCreateCourse returns the correct values
+
+  const onConfirm = async () => {
+    console.log("file uploaded");
+    try {
+      const response = await createCourse(); // Ensure createCourse is defined and returns a response
+      console.log(response, "response in ConfirmationModal");
+
+      if (response?.status === 201) {
+        setIsOpen(false);
+        navigate("/mycourses");
+      }
+    } catch (error) {
+      console.error("Error creating course:", error);
+      // Optional: You can also show an error message to the user here
     }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -56,19 +70,22 @@ const ConfirmationModal = ({ isOpen,setIsOpen}) => {
           variants={modalVariant}
         >
           <ModalContainer>
-            <CloseButton onClick={()=>{setIsOpen(false)}}>✖</CloseButton>
+            <CloseButton onClick={() => setIsOpen(false)}>✖</CloseButton>
             <h2>Confirmation</h2>
             <p>Are you sure you want to proceed with this action?</p>
             <div className="flex justify-center mt-4">
               <button
-                className="border p-2 px-4 rounded-md bg-blue-600 text-white hover:bg-blue-800"
+                className={`border p-2 px-4 rounded-md bg-blue-600 text-white hover:bg-blue-800 ${
+                  loading ? "bg-gray-500" : ""
+                }`}
                 onClick={onConfirm}
+                disabled={loading}
               >
                 Confirm
               </button>
               <button
                 className="border p-2 px-4 rounded-md bg-red-600 text-white hover:bg-red-800 ml-2"
-                onClick={()=>{setIsOpen(false)}}
+                onClick={() => setIsOpen(false)}
               >
                 Cancel
               </button>

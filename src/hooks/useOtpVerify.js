@@ -1,27 +1,45 @@
-import React, { useState } from 'react'
-import api from '../api/axiosInterceptor'
+import { useState } from 'react';
+import api from '../api/axiosInterceptor';
+import { useDispatch } from 'react-redux'; 
+import { login } from '../features/userSlice'; 
+import { useNavigate } from 'react-router-dom';
+
 const useOtpVerify = () => {
-const [loading,setLoading]=useState(false)
+    const dispatch = useDispatch();
+    const Navigate=useNavigate()
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-const OtpVerify=async(data)=>{
-    setLoading(true)
-try {
-  const response=await api.post("auth/verify",data)
-    console.log(response,'respo in otpp')
-       if(response.status===200){
-            localStorage.setItem("user",JSON.stringify(response.data.user))
-            dispatch(login(response.data.user));
-            localStorage.setItem("token",response.data.token)
+    const OtpVerify = async (data) => {
+        setLoading(true);
+        setError(null); // Reset error state
+
+        try {
+            const response = await api.post("auth/verify", data);
+            const result = response.data;
+            
+            // Store user data and token in localStorage
+            localStorage.setItem("user", JSON.stringify(result.userVerified));
+            localStorage.setItem("token", result.token);
+            
+            // Dispatch login action with user data
+            console.log(result,'result')
+            dispatch(login(result.userVerified));
+            Navigate('/')
+        } catch (err) {
+            // Set error message for display
+            setError(err.response?.data || err.message);
+            console.error("Verification failed:", err.response?.data || err.message);
+        } finally {
+            setLoading(false); // Stop loading state
         }
-   
-} catch (error) {
-    console.log(error)
-}finally{
-    setLoading(false)
-}
-}
+    };
 
-return{loading,OtpVerify}
-}
+    return {
+        loading,
+        OtpVerify,
+        error,
+    };
+};
 
-export default useOtpVerify
+export default useOtpVerify;

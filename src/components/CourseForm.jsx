@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaImage } from 'react-icons/fa';
 import { setCourseField } from '../store/courseSlice';
@@ -6,11 +6,14 @@ import { setCourseField } from '../store/courseSlice';
 const CourseForm = ({ setStep }) => {
   const dispatch = useDispatch();
   const course = useSelector((state) => state.course.course);
+  const [coverImage, setCoverImage] = useState(null); // Local state for the cover image
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      dispatch(setCourseField({ coverImage: file }));
+      setCoverImage(file); // Store the file in local state
+      // Here you can dispatch only the filename or any other metadata if needed
+      dispatch(setCourseField({ coverImageName: file.name })); // Dispatch metadata
     }
   };
 
@@ -18,9 +21,9 @@ const CourseForm = ({ setStep }) => {
     dispatch(setCourseField({ [field]: value }));
   };
 
-  const handleContinue = (e) => { //this function not working fix this 
-    console.log("hai")
-    e.preventDefault();
+  const handleContinue = (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    console.log("hai");
     setStep(1); // Proceed to the next step for chapter creation
   };
 
@@ -54,41 +57,40 @@ const CourseForm = ({ setStep }) => {
 
         {/* Course Duration */}
         <div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">Course Duration</label>
-  <select
-    value={course.duration}
-    onChange={(e) => handleFieldChange('duration', e.target.value)}
-    className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-    required
-  >
-    <option value="" disabled>Select Duration</option>
-    <option value="1 month">1 Month</option>
-    <option value="3 months">3 Months</option>
-    <option value="6 months">6 Months</option>
-    <option value="1 year">1 Year</option>
-    <option value="add-new" disabled>Add New</option>
-  </select>
-</div>
+          <label className="block text-sm font-medium text-gray-700">Course Duration</label>
+          <select
+            value={course.duration}
+            onChange={(e) => handleFieldChange('duration', e.target.value)}
+            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+            required
+          >
+            <option value="" disabled>Select Duration</option>
+            <option value="1 month">1 Month</option>
+            <option value="3 months">3 Months</option>
+            <option value="6 months">6 Months</option>
+            <option value="1 year">1 Year</option>
+            <option value="add-new" disabled>Add New</option>
+          </select>
+        </div>
 
-{/* Course Category */}
-<div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">Course Category</label>
-  <select
-    value={course.category}
-    onChange={(e) => handleFieldChange('category', e.target.value)}
-    className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-    required
-  >
-    <option value="" disabled>Select Category</option>
-    <option value="Technology & Programming">Technology & Programming</option>
-    <option value="Business & Management">Business & Management</option>
-    <option value="Design & Multimedia">Design & Multimedia</option>
-    <option value="Personal Development">Personal Development</option>
-    <option value="Academic Subjects">Academic Subjects</option>
-    <option value="add-new" disabled>Add New </option>
-  </select>
-</div>
-
+        {/* Course Category */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Course Category</label>
+          <select
+            value={course.category}
+            onChange={(e) => handleFieldChange('category', e.target.value)}
+            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+            required
+          >
+            <option value="" disabled>Select Category</option>
+            <option value="Technology & Programming">Technology & Programming</option>
+            <option value="Business & Management">Business & Management</option>
+            <option value="Design & Multimedia">Design & Multimedia</option>
+            <option value="Personal Development">Personal Development</option>
+            <option value="Academic Subjects">Academic Subjects</option>
+            <option value="add-new" disabled>Add New </option>
+          </select>
+        </div>
 
         {/* Cover Image */}
         <div className="mb-4">
@@ -106,9 +108,9 @@ const CourseForm = ({ setStep }) => {
               <span className="text-gray-600">Upload Cover Image</span>
             </label>
           </div>
-          {course.coverImage && (
+          {coverImage && ( // Use local state for preview
             <img
-              src={URL.createObjectURL(course.coverImage)}
+              src={URL.createObjectURL(coverImage)}
               alt="Cover Preview"
               className="mt-2 rounded-md"
               style={{ maxWidth: '100%', maxHeight: '200px' }}
@@ -117,7 +119,7 @@ const CourseForm = ({ setStep }) => {
         </div>
 
         {/* Continue Button */}
-        <button type="submit" className="mt-4 px-4 py-2 bg-primary text-white rounded-md">
+        <button type="submit" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
           Continue
         </button>
       </form>

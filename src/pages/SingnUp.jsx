@@ -11,15 +11,15 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [isModal, setIsModal] = useState(true);
-  const { signup, signupSuccess, signupLoading } = useSignup();
+  const [isModal, setIsModal] = useState(false);
+  const { signup,signupSuccess, signupLoading } = useSignup();
 
   const onSubmit = async (e) => {
     e.preventDefault();
     const data = { email, password, username: fullName };
     const response = await signup(data);
-    console.log(signupSuccess, "response");
-    if (signupSuccess) {
+    console.log(signupSuccess, response,"response");
+    if (signupSuccess||response.status==201||response.status==200) {
       setIsModal(true);
     }
   };

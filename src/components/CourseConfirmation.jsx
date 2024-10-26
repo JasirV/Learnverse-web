@@ -3,13 +3,18 @@ import { useSelector } from 'react-redux';
 import ConfirmationModal from './ConfirmationModal';
 
 const CourseConfirmation = ({ setStep }) => {
-  // Access course and chapters from Redux store
-  const[isOpen,setIsOpen]=useState(false)
-  const { course, chapters } = useSelector((state) => state.course);
+  // State for modal open/close
+  const [isOpen, setIsOpen] = useState(false);
 
+  // Access course and chapters from Redux store
+  const { course, chapters } = useSelector((state) => state.course);
+  console.log(course);
+  
   return (
     <div className="p-6 bg-white rounded-md shadow-md">
-        <ConfirmationModal isOpen={isOpen} setIsOpen={setIsOpen}/>
+      {/* Render modal only when isOpen is true */}
+      {isOpen && <ConfirmationModal isOpen={isOpen} setIsOpen={setIsOpen} />}
+
       <h2 className="text-lg font-semibold mb-4">Course Confirmation</h2>
 
       {/* Course Details */}
@@ -38,13 +43,17 @@ const CourseConfirmation = ({ setStep }) => {
               <h4 className="font-semibold">{chapter.title}</h4>
               <p>{chapter.description}</p>
               {/* Display topics if they are part of chapter structure */}
-              {chapter.topics?.map((topic, i) => (
-                <div key={i} className="pl-4">
-                  <p><strong>Topic Title:</strong> {topic.title}</p>
-                  <p><strong>Topic Description:</strong> {topic.description}</p>
-                  <p><strong>Content:</strong> {topic.content}</p>
+              {chapter.topics && chapter.topics.length > 0 && (
+                <div className="pl-4">
+                  {chapter.topics.map((topic, i) => (
+                    <div key={i}>
+                      <p><strong>Topic Title:</strong> {topic.title}</p>
+                      <p><strong>Topic Description:</strong> {topic.description}</p>
+                      <p><strong>Content:</strong> {topic.content}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           ))}
         </div>
@@ -52,8 +61,8 @@ const CourseConfirmation = ({ setStep }) => {
 
       {/* Confirm Button */}
       <button
-      onClick={()=>setIsOpen(true)}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md"
+        onClick={() => setIsOpen(true)}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
       >
         Confirm Course
       </button>

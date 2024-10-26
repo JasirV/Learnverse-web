@@ -21,8 +21,9 @@ const courseSlice = createSlice({
     addChapter: (state, action) => {
         state.chapters.push(action.payload); 
       },
+      reset: () => initialState, 
   },
 });
 
-export const { setCourseField,addChapter } = courseSlice.actions;
+export const { setCourseField,addChapter,reset } = courseSlice.actions;
 export default courseSlice.reducer;

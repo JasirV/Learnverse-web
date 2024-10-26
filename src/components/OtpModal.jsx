@@ -2,10 +2,10 @@ import React, { useState, useRef } from 'react';
 import { Mail } from 'lucide-react';
 import useOtpVerify from '../hooks/useOtpVerify';
 
-const OtpModal = ({ email}) => {
+const OtpModal = ({email}) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const inputRefs = useRef([]);
-  const {OtpVerify,loading}=useOtpVerify();
+  const { OtpVerify, loading, error } = useOtpVerify();
   const handleChange = (element, index) => {
     if (isNaN(element.value)) return;
     
@@ -28,7 +28,7 @@ const OtpModal = ({ email}) => {
     e.preventDefault();
     const data={email,otp:otp.join('')}
    console.log(data,"otpptt")
-  await OtpVerify(data)
+    await OtpVerify(data)
   };
 
   return (
