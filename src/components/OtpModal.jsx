@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Mail } from 'lucide-react';
-import useOtpVerify from '../../hooks/useOtpVerify';
+import useOtpVerify from '../hooks/useOtpVerify';
 
 const OtpModal = ({ email}) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));

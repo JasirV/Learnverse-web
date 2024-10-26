@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import api from '../api/axiosInterceptor'
 const useOtpVerify = () => {
 const [loading,setLoading]=useState(false)
-const {setAuthUser}=useAuthContext()
 
 const OtpVerify=async(data)=>{
     setLoading(true)
@@ -11,8 +10,8 @@ try {
     console.log(response,'respo in otpp')
        if(response.status===200){
             localStorage.setItem("user",JSON.stringify(response.data.user))
+            dispatch(login(response.data.user));
             localStorage.setItem("token",response.data.token)
-            setAuthUser(response.data)
         }
    
 } catch (error) {
