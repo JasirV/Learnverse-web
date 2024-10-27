@@ -13,8 +13,8 @@ const navigate=useNavigate()
 
   return (
     <>
-    <div className='topbar w-full flex shadow items-center justify-center py-3 gap-5 md:py-6 px-4 rounded-3xl bg-white'>
-        <form className='hidden md:flex items-center justify-center  w-2/4'>
+    <div className='topbar w-full flex shadow items-center justify-center py-3 gap-20 md:py-6 md:px-4 rounded-3xl bg-white'>
+        <form className='md:flex items-center justify-center  w-2/4'>
             <input placeholder="Search" onChange={()=>{}} className="w-[18rem] lg:w-[38rem]  rounded-full py-3 outline-none text-sm font-light px-3 bg-faint-pink bg-opacity-25 border border-gray-100" />
         </form>
 

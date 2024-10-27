@@ -40,8 +40,8 @@ const SignUp = () => {
   return (
     <>
       <div className="flex justify-center items-center h-screen w-full relative">
-        <div className="w-2/3 rounded-xl flex shadow-xl border bg-white">
-          <div className="w-1/2 h-full flex flex-col justify-center p-10">
+        <div className="lg:w-2/3 w-11/12 rounded-xl flex shadow-xl border bg-white">
+          <div className="lg:w-1/2 w-full h-full flex flex-col justify-center p-2 sm:p-10">
             {/* Heading and Icon */}
             <div className="mb-6">
               <div className="flex items-center gap-3">
@@ -136,13 +136,13 @@ const SignUp = () => {
               />
             </div>
             <div
-              className="flex w-full justify-end text-blue-500 font-light mt-2"
+              className="flex w-full justify-center mt-4 sm:justify-end text-blue-500 font-light mb-2 sm:mb-0 sm:mt-2"
               onClick={() => navigate("/login")}
             >
               <a className="text-sm hover:underline">Already have an account?</a>
             </div>
           </div>
-          <div className="w-1/2 relative flex items-center justify-center overflow-hidden rounded-lg bg-background">
+          <div className="w-1/2 hidden  relative lg:flex items-center justify-center overflow-hidden rounded-lg bg-background">
             <img
               src={LoginImg}
               className="w-full h-full object-cover"

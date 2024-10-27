@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import useCreateCourse from "../hooks/userCreateCourse";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { reset } from "../store/courseSlice";
+import api from "../api/axiosInterceptor";
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -42,21 +45,27 @@ const modalVariant = {
 
 const ConfirmationModal = ({ isOpen, setIsOpen }) => {
   const navigate = useNavigate();
-  const { createCourse, loading } = useCreateCourse(); // Ensure useCreateCourse returns the correct values
+  const dispatch = useDispatch();
+  const courseData = useSelector((state) => state.course);
+  console.log(courseData)
+  const [loading, setLoading] = useState(false);
 
   const onConfirm = async () => {
-    console.log("file uploaded");
+    setLoading(true);
     try {
-      const response = await createCourse(); // Ensure createCourse is defined and returns a response
-      console.log(response, "response in ConfirmationModal");
-
-      if (response?.status === 201) {
+      const response = await api.post('/courses/', courseData);
+      console.log(response,'response from 56')
+      if (response.status === 201) {
+        toast.success("Created Successfully");
+        setLoading(false);
+        dispatch(reset());
         setIsOpen(false);
         navigate("/mycourses");
       }
     } catch (error) {
-      console.error("Error creating course:", error);
-      // Optional: You can also show an error message to the user here
+      console.error("Error creating course:", error.response?.data || error.message);
+    } finally {
+      setLoading(false);
     }
   };
 

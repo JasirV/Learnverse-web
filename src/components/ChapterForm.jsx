@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { addChapter } from '../store/courseSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { FaPlus } from 'react-icons/fa';
+import {reset} from '../store/courseSlice';
+import handleFileUpload from '../utils/handleFileUpload';
+import api from '../api/axiosInterceptor';
+
 
 const ChapterForm = ({ setStep }) => {
   const dispatch = useDispatch();
-  
+  const courseId = useSelector((state) => state.course.courseId); 
+
   const [chapter, setChapter] = useState({
     title: '',
-    topics: [{ title: '', description: '', content: '', attachments: null }]
+    description: '',
+    topics: [{ title: '', content: '', attachments: null }]
   });
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChapterFieldChange = (field, value) => {
     setChapter({ ...chapter, [field]: value });
@@ -25,7 +32,7 @@ const ChapterForm = ({ setStep }) => {
   const handleAddTopic = () => {
     setChapter({
       ...chapter,
-      topics: [...chapter.topics, { title: '', description: '', content: '', attachments: null }]
+      topics: [...chapter.topics, { title: '', content: '', attachments: null }]
     });
   };
 
@@ -36,18 +43,57 @@ const ChapterForm = ({ setStep }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleAttachmentChange = async (index, file) => {
+    if (file && !file.type.startsWith('image/')) {
+      setErrorMessage('Only image files are allowed.');
+      return;
+    }
+    try {
+      setErrorMessage('');
+      const uploadedUrl = await handleFileUpload(file);
+      handleTopicFieldChange(index, 'attachments', uploadedUrl);
+    } catch (error) {
+      setErrorMessage('Error uploading image. Please try again.');
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(addChapter(chapter));
-    setStep(2)
-    setChapter({ title: '', topics: [{ title: '', description: '', content: '', attachments: null }] });
+    setIsLoading(true);
+    try {
+      // Step 1: Create Chapter
+      const chapterResponse = await api.post(`/chapters/${courseId}`, {
+        title: chapter.title,
+        description: chapter.description
+      });
+      const newChapterId = chapterResponse.data.chapter._id;
+
+      // Step 2: Create Topics for the Chapter
+      for (const topic of chapter.topics) {
+        const topicResponse = await api.post(`/topicrouter/${newChapterId}`, {
+          title: topic.title,
+          description: topic.description,
+          content: topic.content,
+          attachments: topic.attachments
+        });
+        console.log('Topic created:', topicResponse.data);
+      }
+
+      // Clear state and move to the next step
+      dispatch(reset());
+      setStep(2);
+
+    } catch (error) {
+      console.error('Error creating chapter or topics:', error.response?.data || error.message);
+      setErrorMessage('An error occurred while creating the chapter or topics.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="w-full p-6 bg-white rounded-md shadow-md">
       <h2 className="text-lg font-semibold mb-4">Create Chapter</h2>
-
-      {/* Chapter Title */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Chapter Title</label>
         <input
@@ -59,7 +105,6 @@ const ChapterForm = ({ setStep }) => {
         />
       </div>
 
-      {/* Topics */}
       <h3 className="text-md font-semibold mt-4 mb-2">Topics</h3>
       {chapter.topics.map((topic, index) => (
         <div key={index} className="border p-3 rounded mb-2">
@@ -102,19 +147,18 @@ const ChapterForm = ({ setStep }) => {
             />
           </div>
           <div>
-            <label className="block text-sm">Attachments</label>
+            <label className="block text-sm">Attachments (Images Only)</label>
             <input
               type="file"
-              onChange={(e) =>
-                handleTopicFieldChange(index, 'attachments', e.target.files[0])
-              }
+              accept="image/*"
+              onChange={(e) => handleAttachmentChange(index, e.target.files[0])}
               className="p-2 w-full border border-gray-300 rounded"
             />
           </div>
+          {errorMessage && <p className="text-red-500 text-sm mt-1">{errorMessage}</p>}
         </div>
       ))}
 
-      {/* Add Topic Button */}
       <button
         type="button"
         onClick={handleAddTopic}
@@ -123,14 +167,15 @@ const ChapterForm = ({ setStep }) => {
         <FaPlus className="mr-2" /> Add Topic
       </button>
 
-      {/* Submit Chapter Button */}
       <button
         type="submit"
         onClick={handleSubmit}
         className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md"
+        disabled={isLoading}
       >
-        Save Chapter
+        {isLoading ? 'Saving...' : 'Save Chapter'}
       </button>
+      {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
     </div>
   );
 };

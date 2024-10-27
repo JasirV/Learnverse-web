@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Home, Settings, BookOpen, User, CircleHelp, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { SiStudyverse } from 'react-icons/si';
+import { FiMenu } from 'react-icons/fi'; // Import the menu icon
 
 const MenuItem = ({ icon: Icon, label, items, onClick }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,6 +37,7 @@ const MenuItem = ({ icon: Icon, label, items, onClick }) => {
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleMenuItemClick = (label) => {
     console.log(label, "label");
@@ -47,16 +49,17 @@ const Sidebar = () => {
         navigate('/mycourses');
         break;
       case "Settings":
-        navigate('/');
+        navigate('/settings'); // Update to correct route
         break;
       case "Profile":
-        navigate('/');
+        navigate('/profile'); // Update to correct route
         break;
       case "Help":
-        navigate('/');
+        navigate('/help'); // Update to correct route
         break;
       case "logout":
-        navigate('/');
+        // Handle logout logic here
+        navigate('/'); // Update to correct route
         break;
       default:
         break;
@@ -64,28 +67,41 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="w-64 border mt-2 mb-5 text-white p-4 h-screen rounded-tr-xl rounded-br-xl flex flex-col justify-between">
-      <div>
-        <div className="mb-6 w-full flex">
-          <div className='flex items-center gap-3 mt-3'>
-            <div className='bg-primary p-2 rounded-full flex items-center justify-center'>
-              <SiStudyverse color='#f9cfe7' size={30} />
+    <>
+      <button 
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
+        className="sm:hidden absolute p-2 text-primary rounded "
+      >
+        <FiMenu size={24} /> {/* Use FiMenu icon instead of text */}
+      </button>
+      <div className={`w-64 border mt-2 mb-5 text-white p-4 h-screen rounded-tr-xl rounded-br-xl ${isSidebarOpen ? 'block' : 'hidden relative '} sm:flex flex-col justify-between`}>
+        <div>
+          <div className="mb-6 w-full flex">
+            <div className='flex items-center gap-3 mt-3'>
+              <div className='bg-primary p-2 rounded-full flex items-center justify-center'>
+                <SiStudyverse color='#f9cfe7' size={30} />
+              </div>
+              <h1 className='text-xl font-medium text-primary'>Learnverse</h1>
             </div>
-            <h1 className='text-xl font-medium text-primary'>Learnverse</h1>
+          </div>
+          <div className="space-y-2">
+            <MenuItem icon={Home} label="Home" onClick={handleMenuItemClick} />
+            <MenuItem 
+              icon={BookOpen} 
+              label="Mycourses" 
+              items={["Course 1", "Course 2", "Course 3"]} // Add nested items if necessary
+              onClick={handleMenuItemClick} 
+            />
+            <MenuItem icon={Settings} label="Settings" onClick={handleMenuItemClick} />
+            <MenuItem icon={User} label="Profile" onClick={handleMenuItemClick} />
           </div>
         </div>
-        <div className="space-y-2">
-          <MenuItem icon={Home} label="Home" onClick={handleMenuItemClick} />
-          <MenuItem icon={BookOpen} label="Mycourses" onClick={handleMenuItemClick} />
-          <MenuItem icon={Settings} label="Settings" onClick={handleMenuItemClick} />
-          <MenuItem icon={User} label="Profile" onClick={handleMenuItemClick} />
+        <div className='w-full h-96 flex flex-col justify-end'>
+          <MenuItem icon={CircleHelp} label="Help" onClick={handleMenuItemClick} />
+          <MenuItem icon={LogOut} label="Logout" onClick={handleMenuItemClick} />
         </div>
       </div>
-      <div className='w-full h-96 flex flex-col justify-end'>
-        <MenuItem icon={CircleHelp} label="Help" onClick={handleMenuItemClick} />
-        <MenuItem icon={LogOut} label="logout" onClick={handleMenuItemClick} />
-      </div>
-    </div>
+    </>
   );
 };
 

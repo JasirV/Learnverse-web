@@ -1,30 +1,68 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { FaImage } from 'react-icons/fa';
-import { setCourseField } from '../store/courseSlice';
+import { setCourseId } from '../store/courseSlice';
+import handleFileUpload from '../utils/handleFileUpload';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import api from '../api/axiosInterceptor';
 
 const CourseForm = ({ setStep }) => {
   const dispatch = useDispatch();
-  const course = useSelector((state) => state.course.course);
-  const [coverImage, setCoverImage] = useState(null); // Local state for the cover image
+  const [course, setCourse] = useState({
+    title: '',
+    description: '',
+    duration: '',
+    category: '',
+    coverImage: null,
+  });
+  const [isUploading, setIsUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleImageChange = (e) => {
+  const handleFieldChange = (field, value) => {
+    setCourse((prevCourse) => ({
+      ...prevCourse,
+      [field]: value,
+    }));
+  };
+
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setCoverImage(file); // Store the file in local state
-      // Here you can dispatch only the filename or any other metadata if needed
-      dispatch(setCourseField({ coverImageName: file.name })); // Dispatch metadata
+      try {
+        setIsUploading(true);
+        const imageUrl = await handleFileUpload(file);
+        handleFieldChange('coverImage', imageUrl);
+      } catch (error) {
+        console.error("Failed to upload image:", error);
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
-  const handleFieldChange = (field, value) => {
-    dispatch(setCourseField({ [field]: value }));
+  const handleContinue = (e) => {
+    e.preventDefault();
+    setStep(1);
   };
 
-  const handleContinue = (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    console.log("hai");
-    setStep(1); // Proceed to the next step for chapter creation
+  const onConfirm = async () => {
+    setLoading(true);
+    try {
+      const response = await api.post('/courses/', course);
+      if (response.status === 201) {
+        toast.success("Course Created Successfully");
+        dispatch(setCourseId(response.data.course_id));
+        setLoading(false);
+        navigate("/mycourses");
+      }
+    } catch (error) {
+      console.error("Error creating course:", error.response?.data || error.message);
+      toast.error("Failed to create course");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -69,7 +107,6 @@ const CourseForm = ({ setStep }) => {
             <option value="3 months">3 Months</option>
             <option value="6 months">6 Months</option>
             <option value="1 year">1 Year</option>
-            <option value="add-new" disabled>Add New</option>
           </select>
         </div>
 
@@ -88,7 +125,6 @@ const CourseForm = ({ setStep }) => {
             <option value="Design & Multimedia">Design & Multimedia</option>
             <option value="Personal Development">Personal Development</option>
             <option value="Academic Subjects">Academic Subjects</option>
-            <option value="add-new" disabled>Add New </option>
           </select>
         </div>
 
@@ -108,19 +144,30 @@ const CourseForm = ({ setStep }) => {
               <span className="text-gray-600">Upload Cover Image</span>
             </label>
           </div>
-          {coverImage && ( // Use local state for preview
+          {/* {course.coverImage && (
             <img
               src={URL.createObjectURL(coverImage)}
               alt="Cover Preview"
               className="mt-2 rounded-md"
               style={{ maxWidth: '100%', maxHeight: '200px' }}
             />
-          )}
+          )} */}
+          {isUploading && <p>Uploading...</p>}
         </div>
 
         {/* Continue Button */}
-        <button type="submit" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+        {/* <button type="submit" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
           Continue
+        </button> */}
+
+        {/* Confirm and Create Course Button */}
+        <button
+          type="button"
+          onClick={onConfirm}
+          className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+          disabled={loading}
+        >
+          {loading ? 'Creating...' : 'Create Course'}
         </button>
       </form>
     </div>

@@ -34,11 +34,11 @@ const Login = () => {
 
   return (
     <div className="flex justify-center items-center h-screen w-full">
-      <div className="w-2/3  rounded-xl flex shadow-xl border bg-white">
-        <div className="w-1/2 relative flex items-center justify-center overflow-hidden rounded-lg bg-background">
+      <div className="md:w-2/3 w-11/12  rounded-xl flex shadow-xl border bg-white">
+        <div className="w-1/2 hidden relative md:flex items-center justify-center overflow-hidden rounded-lg bg-background">
           <img src={LoginImg} className="w-full h-full object-cover" alt="Login" />
         </div>
-        <div className="w-1/2 h-full flex flex-col justify-center p-10">
+        <div className="md:w-1/2 w-full h-full flex flex-col justify-center sm:p-10 p-2">
           {/* Heading and Icon */}
           <div className="mb-6 ">
             <div className="flex items-center gap-3">
@@ -107,7 +107,7 @@ const Login = () => {
           </div>
 
           {/* Forgot Password Link */}
-          <div className="flex w-full justify-end text-blue-500 font-light mt-2" onClick={() => navigate('/signup')}>
+          <div className="flex w-full justify-center mt-3 mb-2 md:justify-end text-blue-500 font-light md:mt-2" onClick={() => navigate('/signup')}>
             <a href="#" className="text-sm hover:underline">You do not have an account?</a>
           </div>
         </div>
